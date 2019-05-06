@@ -2,13 +2,13 @@
 #'
 #' Fit a Bayesian Decision Tree.
 #'
-#' @param formuler ravioli ravioli give me the formuoli
+#' @param formuler ravioli ravioli give me the formuoli.
 #' @param data the data associated with the formuler.
 #' @param family the family to use for the feature prior. If NULL, does not construct a prior.
 #' @return A trained decision tree.
 #' @author Eric Bridgeford
 #' @export
-dec_tree.fit <- function(formuler, data, family="dirichlet", method="tree.fit", prior=NULL) {
+dec_tree.fit <- function(formuler, data=NULL, family="dirichlet", prior=NULL) {
   mf <- Call <- match.call()
   print(mf)
   m <- match(c("formuler", "data", "subset"), names(mf), 0)
@@ -133,9 +133,10 @@ create.split <- function(X, Y, i, t) {
   # of interest
   idx <- X[,i] < t
   # return split as a list
-  split <- list(left=list(X=X[idx,], Y=Y[idx]),
-                right=list(X=X[!idx,], Y=Y[!idx]),
-                feature=i, threshold=t, n=length(Y))
+  split <- structure(list(left=list(X=X[idx,], Y=Y[idx]),
+                     right=list(X=X[!idx,], Y=Y[!idx]),
+                     feature=i, threshold=t, n=length(Y)),
+                     class="split")
   return(split)
 }
 
@@ -204,5 +205,5 @@ leaf.node <- function(Y) {
   gr.ct <- sapply(levels(Y), function(y) {
     sum(Y == y)
   })
-  return(list(vote=levels(Y)[which.max(gr.ct)]))
+  return(structure(list(vote=levels(Y)[which.max(gr.ct)]), class="leaf"))
 }

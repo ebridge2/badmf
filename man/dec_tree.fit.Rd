@@ -4,11 +4,11 @@
 \alias{dec_tree.fit}
 \title{Bayesian Decision Tree Fit}
 \usage{
-dec_tree.fit(formuler, data, family = "dirichlet", method = "tree.fit",
+dec_tree.fit(formuler, data = NULL, family = "dirichlet",
   prior = NULL)
 }
 \arguments{
-\item{formuler}{ravioli ravioli give me the formuoli}
+\item{formuler}{ravioli ravioli give me the formuoli.}
 
 \item{data}{the data associated with the formuler.}
 

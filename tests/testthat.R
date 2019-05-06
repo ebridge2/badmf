@@ -1,4 +1,4 @@
 library(testthat)
-library(bayesianrf)
+library(badmf)
 
-test_check("bayesianrf")
+test_check("badmf")
