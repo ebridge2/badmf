@@ -25,24 +25,38 @@ dec_tree.fit <- function(formuler, data, family="dirichlet", method="tree.fit", 
   return(fit)
 }
 
-#' build tree recursively
+#' Recursive Approach for Building Decision Tree
 #' @param split a particular split node.
 #' @param d the number of features to subsample.
 #' @param depth.max the max tree depth.
 #' @param size the minimum number of elements at a particular.
+#' @param depth the current depth of the tree.
+#' @param debug a boolean indicating whether to save the predictors and responses
+#' that are categorized into leaf nodes.
 #' @importFrom forcats fct_c
-build.tree <- function(split, d, depth.max, size, depth) {
+#' @return a layer of a decision tree.
+#' @author Eric Bridgeford
+build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
   # if we have an empty child, create a leaf by merging
   # so that we don't have a totally empty child
   if (length(split$left$Y) == 0 || length(split$right$Y) == 0) {
-    return(leaf.node(fct_c(split$left$Y, split$right$Y)))
+    return(
+      ifelse(!debug, leaf.node(fct_c(split$left$Y, split$right$Y)),
+             c(leaf.node(fct_c(split$left$Y, split$right$Y)),
+               list(X=rbind(split$left$X, split$right$X),
+                    Y=fct_c(split$left$Y, split$right$Y))))
+    )
   }
 
   # if we are at the max depth, create a leaf for the left and
   # right children
   if (depth >= depth.max) {
-    split$left <- leaf.node(split$left$Y)
-    split$right <- leaf.node(split$right$Y)
+    split$left <- ifelse(!debug, leaf.node(split$left$Y),
+                         c(leaf.node(split$left$Y),
+                           list(X=split$left$X, Y=split$left$Y)))
+    split$right <- ifelse(!debug, leaf.node(split$right$Y),
+                          c(leaf.node(split$right$Y),
+                            list(X=split$right$X, Y=split$right$Y)))
     return(split)
   }
   # process right child
@@ -53,7 +67,9 @@ build.tree <- function(split, d, depth.max, size, depth) {
         d, depth.max, size, depth + 1
       )
   } else {
-    split$right <- leaf.node(split$right$Y)
+    split$right <- ifelse(!debug, leaf.node(split$right$Y),
+                          c(leaf.node(split$right$Y),
+                            list(X=split$right$X, Y=split$right$Y)))
   }
 
   # process left child
@@ -64,7 +80,9 @@ build.tree <- function(split, d, depth.max, size, depth) {
       d, depth.max, size, depth + 1
     )
   } else {
-    split$left <- leaf.node(split$left$Y)
+    split$left <- ifelse(!debug, leaf.node(split$left$Y),
+                         c(leaf.node(split$left$Y),
+                           list(X=split$left$X, Y=split$left$Y)))
   }
   return(split)
 }
@@ -75,13 +93,17 @@ build.tree <- function(split, d, depth.max, size, depth) {
 #' @param d the number of features to subsample.
 #' @param depth the maximum allowed tree depth.
 #' @param size the minimum allowed number of samples for an individual node.
-tree.fit <- function(X, Y, d, depth.max=1, size=1) {
+#' @param debug whether to save the predictors and responses that are categorized
+#' into a particular leaf node.
+#' @return a fit decision tree.
+#' @author Eric Bridgeford
+tree.fit <- function(X, Y, d, depth.max=1, size=1, debug=FALSE) {
   n <- length(Y); p <- dim(X)[2]
   if (!(ifelse(is.integer(p), d <= p & d > 0, FALSE) ||
       (ifelse(is.null(p), TRUE, FALSE)))) {
     stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
   }
-  tree <- build.tree(get.split(X, Y, d), d, depth.max, size, 1)
+  tree <- build.tree(get.split(X, Y, d), d, depth.max, size, 1, debug)
   return(tree)
 }
 

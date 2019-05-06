@@ -2,21 +2,23 @@
 % Please edit documentation in R/dec_tree.R
 \name{dec_tree.fit}
 \alias{dec_tree.fit}
-\title{Decision Tree}
+\title{Bayesian Decision Tree Fit}
 \usage{
-dec_tree.fit(formula, data, family = "dirichlet", method = "tree.fit",
+dec_tree.fit(formuler, data, family = "dirichlet", method = "tree.fit",
   prior = NULL)
 }
 \arguments{
-\item{data}{the data associated with the formula.}
+\item{formuler}{ravioli ravioli give me the formuoli}
 
-\item{form}{a valid formula object.}
+\item{data}{the data associated with the formuler.}
+
+\item{family}{the family to use for the feature prior. If NULL, does not construct a prior.}
 }
 \value{
 A trained decision tree.
 }
 \description{
-Decision Tree
+Fit a Bayesian Decision Tree.
 }
 \author{
 Eric Bridgeford
