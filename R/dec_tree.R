@@ -35,38 +35,36 @@ build.tree <- function(split, d, depth.max, size, depth) {
   # if we have an empty child, create a leaf by merging
   # so that we don't have a totally empty child
   if (length(split$left$Y) == 0 || length(split$right$Y) == 0) {
-    split$left <- split$right <- leaf.node(fct_c(split$left$Y,
-                                                 split$right$Y))
-    return(split)
+    return(leaf.node(fct_c(split$left$Y, split$right$Y)))
   }
 
   # if we are at the max depth, create a leaf for the left and
   # right children
   if (depth >= depth.max) {
-    split$left <- leaf.node(split$left)
-    split$right <- leaf.node(split$right)
-    return(split)
-  }
-  # process left child
-  if (length(split$left$Y) > size) {
-    # split the node if we can still do better
-    split$right <- get.split(split$right$X, split$right$Y, d)
-    split <- build.tree(split$right, d, depth.max, size, depth + 1)
-    return(split)
-  } else {
+    split$left <- leaf.node(split$left$Y)
     split$right <- leaf.node(split$right$Y)
     return(split)
+  }
+  # process right child
+  if (length(split$right$Y) > size) {
+    # split the node if we can still do better
+      split$right <- build.tree(
+        get.split(split$right$X, split$right$Y, d),
+        d, depth.max, size, depth + 1
+      )
+  } else {
+    split$right <- leaf.node(split$right$Y)
   }
 
   # process left child
   if (length(split$left$Y) > size) {
     # split the node if we can still do better
-    split$left <- get.split(split$left$X, split$left$Y, d)
-    split <- build.tree(split$left, d, depth.max, size, depth + 1)
-    return(split)
+    split$left <- build.tree(
+      get.split(split$left$X, split$left$Y, d),
+      d, depth.max, size, depth + 1
+    )
   } else {
     split$left <- leaf.node(split$left$Y)
-    return(split)
   }
   return(split)
 }
@@ -101,7 +99,7 @@ create.split <- function(X, Y, i, t) {
   # return split as a list
   split <- list(left=list(X=X[idx,], Y=Y[idx]),
                 right=list(X=X[!idx,], Y=Y[!idx]),
-                feature=i, threshold=t)
+                feature=i, threshold=t, n=length(Y))
   return(split)
 }
 
@@ -116,7 +114,7 @@ get.split <- function(X, Y, d) {
   # sample features to check
   features <- sample(1:p, d)
   # initialize best split
-  best_split <- list(t=NULL, feature=NULL, score=1.1, split=NULL)
+  best_split <- list(X=X, Y=Y, t=NULL, feature=NULL, score=1.1, split=NULL)
   # loop over subsampled features
   for (feature in features) {
     # check all possible splits for feature of interest
