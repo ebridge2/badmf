@@ -40,23 +40,31 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
   # if we have an empty child, create a leaf by merging
   # so that we don't have a totally empty child
   if (length(split$left$Y) == 0 || length(split$right$Y) == 0) {
-    return(
-      ifelse(!debug, leaf.node(fct_c(split$left$Y, split$right$Y)),
-             c(leaf.node(fct_c(split$left$Y, split$right$Y)),
+    if (!debug) {
+      return(leaf.node(fct_c(split$left$Y, split$right$Y)))
+    } else {
+      return(c(leaf.node(fct_c(split$left$Y, split$right$Y)),
                list(X=rbind(split$left$X, split$right$X),
                     Y=fct_c(split$left$Y, split$right$Y))))
-    )
+    }
   }
 
   # if we are at the max depth, create a leaf for the left and
   # right children
   if (depth >= depth.max) {
-    split$left <- ifelse(!debug, leaf.node(split$left$Y),
-                         c(leaf.node(split$left$Y),
-                           list(X=split$left$X, Y=split$left$Y)))
-    split$right <- ifelse(!debug, leaf.node(split$right$Y),
-                          c(leaf.node(split$right$Y),
-                            list(X=split$right$X, Y=split$right$Y)))
+    if (!debug) {
+      split$left <- leaf.node(split$left$Y)
+    } else {
+      split$left <- c(leaf.node(split$left$Y),
+                      list(X=split$left$X, Y=split$left$Y))
+    }
+
+    if (!debug) {
+      split$right <- leaf.node(split$right$Y)
+    } else {
+      split$right <- c(leaf.node(split$right$Y),
+                       list(X=split$right$X, Y=split$right$Y))
+    }
     return(split)
   }
   # process right child
@@ -64,12 +72,15 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
     # split the node if we can still do better
       split$right <- build.tree(
         get.split(split$right$X, split$right$Y, d),
-        d, depth.max, size, depth + 1
+        d, depth.max, size, depth + 1, debug=debug
       )
   } else {
-    split$right <- ifelse(!debug, leaf.node(split$right$Y),
-                          c(leaf.node(split$right$Y),
-                            list(X=split$right$X, Y=split$right$Y)))
+    if (!debug) {
+      split$right <- leaf.node(split$right$Y)
+    } else {
+      split$right <- c(leaf.node(split$right$Y),
+                       list(X=split$right$X, Y=split$right$Y))
+    }
   }
 
   # process left child
@@ -77,12 +88,15 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
     # split the node if we can still do better
     split$left <- build.tree(
       get.split(split$left$X, split$left$Y, d),
-      d, depth.max, size, depth + 1
+      d, depth.max, size, depth + 1, debug=debug
     )
   } else {
-    split$left <- ifelse(!debug, leaf.node(split$left$Y),
-                         c(leaf.node(split$left$Y),
-                           list(X=split$left$X, Y=split$left$Y)))
+    if (!debug) {
+      split$left <- leaf.node(split$left$Y)
+    } else {
+      split$left <- c(leaf.node(split$left$Y),
+                      list(X=split$left$X, Y=split$left$Y))
+    }
   }
   return(split)
 }
@@ -190,5 +204,5 @@ leaf.node <- function(Y) {
   gr.ct <- sapply(levels(Y), function(y) {
     sum(Y == y)
   })
-  return(levels(Y)[which.max(gr.ct)])
+  return(list(vote=levels(Y)[which.max(gr.ct)]))
 }
