@@ -8,6 +8,7 @@ a decision tree is constructed. Bagging has been shown by numerous investigators
 
 As each tree only obtains a subset of the dataset, we risk choosing features that may, or may not, accurately represent the
 target dataset. While growing the forest may seem an easy solution, larger forests are computationally expensive, and we risk
-not seeing the features that really matter for our classification problem at a high enough frequency.
+not seeing the features that really matter for our classification problem at a high frequency representative the quantity of signal they contain.
+
 Through `badmf`, we train an initial random forest using the traditional approach, where features are selected for assessment 
 uniformly and at random using a non-informative Dirichlet Prior (each feature sampled with equal probability). Assuming the sampling distribution for the features is Multinomial, we obtain a Dirichlet Posterior by combining information from our non-informative prior with the relative counts of each feature in the trained forest. We finally train a new classifier, where features are instead sampled using the resulting posterior at each split node. Optimally, the resulting forest is small (running less risk of being highly variant and overfit) and efficient (with the optimal features selected more frequently, we obtain similar performance to a much larger and more complex forest using far fewer nodes).
