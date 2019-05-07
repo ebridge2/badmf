@@ -7,12 +7,12 @@
 rf.input.validator(d, ntrees, bagg, depth.max, depth, size)
 }
 \arguments{
-\item{d}{the number of features to subsample at each node. Defaults to `sqrt(p)`.}
+\item{d}{the number of features to subsample at each node. Defaults to \code{sqrt(p)}.}
 
-\item{ntrees}{the number of trees to construct. Defaults to 10.}
+\item{ntrees}{the number of trees to construct. Defaults to \code{10}.}
 
-\item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-`0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.}
+\item{bagg}{the relative size of the subsamples for the training set. Defaults to \code{0.632}. A numeric s.t.
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements.}
 
 \item{depth.max}{the maximum allowed tree depth.}
 

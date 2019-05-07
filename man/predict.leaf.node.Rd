@@ -6,6 +6,12 @@
 \usage{
 \method{predict}{leaf.node}(object, ...)
 }
+\arguments{
+\item{object}{a leaf.node}
+}
+\value{
+the vote for the leaf.
+}
 \description{
 A function for leaf node prediction
 }

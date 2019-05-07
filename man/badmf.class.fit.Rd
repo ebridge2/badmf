@@ -5,17 +5,17 @@
 \title{Bayesian Decision-Making Forest (BaD-MF) for Classification}
 \usage{
 badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
-  depth.max = 1L, size = 1L, debug = FALSE, no.cores = 1L,
+  depth.max = 1L, size = 1L, debug = FALSE, mc.cores = 1L,
   train.params = NULL)
 }
 \arguments{
-\item{X}{the predictors. A `[n, p]` matrix.}
+\item{X}{the predictors. A \code{[n, p]} matrix.}
 
-\item{Y}{the responses. A `[n]` vector or, optionally, a factor.}
+\item{Y}{the responses. A \code{[n]} vector or, optionally, a factor.}
 
-\item{d}{the number of features to subsample at each node. Defaults to `sqrt(p)`.}
+\item{d}{the number of features to subsample at each node. Defaults to \code{sqrt(p)}.}
 
-\item{alpha}{the feature sampling prior. Corresponds to alpha for a Dirichlet distribution. If `NULL`, samples uniformly for the initial training iteration.}
+\item{alpha}{the feature sampling prior. Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly for the initial training iteration.}
 
 \item{ntrees}{the number of trees to construct. Defaults to 10.}
 
@@ -25,27 +25,27 @@ badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
 
 \item{debug}{whether to save the predictors and responses that are categorized}
 
-\item{no.cores}{the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.}
+\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.}
 
 \item{train.params}{if you wish to provide specialized parameters for training, a list containing the following:
 \itemize{
-\item{`d`}{the number of features to subsample at a split node.}
-\item{`ntrees`}{the number of trees to construct.}
-\item{`bagg`}{the relative size of the subsamples from the training set.}
-\item{`depth.max`}{the maximum allowed tree depth.}
-\item{`size`}{the minimum allowed number of samples for an individual node.}
+\item{\code{d}}{the number of features to subsample at a split node.}
+\item{\code{ntrees}}{the number of trees to construct.}
+\item{\code{bagg}}{the relative size of the subsamples from the training set.}
+\item{\code{depth.max}}{the maximum allowed tree depth.}
+\item{\code{size}}{the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
 
 \item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-`0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.}
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements.}
 }
 \value{
-an object of class `rf` containing the following:
-\item{`forest`}{A list a decision trees.}
-\item{`method`}{the method used to fit the forest.}
-\item{`prior`}{the hyperparameters of the Dirichlet Prior.}
-\item{`post`}{the hyperparamaters of the Dirichlet Posterior.}
+an object of class \code{rf.class} containing the following:
+\item{\code{forest}}{A list a decision trees.}
+\item{\code{method}}{the method used to fit the forest.}
+\item{\code{prior}}{the hyperparameters of the Dirichlet Prior.}
+\item{\code{post}}{the hyperparamaters of the Dirichlet Posterior.}
 }
 \description{
 Fit a Bayesian Decision-Making Forest Classifier.

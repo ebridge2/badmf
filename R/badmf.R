@@ -1,38 +1,38 @@
 #' Bayesian Decision-Making Forest (BaD-MF)
 #'
-#' Fit a Bayesian Decision-Making Forest with a `stats`-like formula frontend interface.
+#' Fit a Bayesian Decision-Making Forest with a \code{stats}-like formula frontend interface.
 #'
 #' @param formuler ravioli ravioli give me the formuoli.
 #' @param data the data associated with the formuler. Note: if you want an intercept, you must
 #' add it ahead of time.
-#' @param d the number of features to subsample at a split node. Defaults to sqrt(nsamples).
-#' @param alpha the feature sampling prior. Should be a `[p]` vector, where `p` is the number of predictors.
-#' Corresponds to alpha for a Dirichlet distribution. If `NULL`, samples uniformly for the initial
+#' @param d the number of features to subsample at a split node. Defaults to \code{sqrt(nsamples)}.
+#' @param alpha the feature sampling prior. Should be a \code{[p]} vector, where \code{p} is the number of predictors.
+#' Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly for the initial
 #' training iteration.
 #' @param ntrees the number of trees to construct. Defaults to 10.
 #' @param bagg the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-#' `0 < bagg <= 1`. Each subsample will be `bagg*nsamples`` elements.
+#' \code{0 < bagg <= 1}. Each subsample will be \code{bagg*nsamples} elements.
 #' @param method whether you want "classification" or "regression".
 #' @param depth.max the maximum allowed tree depth.
 #' @param size the minimum allowed number of samples for an individual node.
 #' @param debug whether to save the predictors and responses that are categorized
-#' @param no.cores the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.
+#' @param mc.cores the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.
 #' @param train.params if you wish to provide specialized parameters for training, a list containing the following:
 #' \itemize{
-#' \item{`d`}{the number of features to subsample at a split node.}
-#' \item{`ntrees`}{the number of trees to construct.}
-#' \item{`bagg`}{the relative size of the subsamples from the training set.}
-#' \item{`depth.max`}{the maximum allowed tree depth.}
-#' \item{`size`}{the minimum allowed number of samples for an individual node.}
+#' \item{\code{d}}{the number of features to subsample at a split node.}
+#' \item{\code{ntrees}}{the number of trees to construct.}
+#' \item{\code{bagg}}{the relative size of the subsamples from the training set.}
+#' \item{\code{depth.max}}{the maximum allowed tree depth.}
+#' \item{\code{size}}{the minimum allowed number of samples for an individual node.}
 #' }
 #' Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).
-#' @return an object of class `rf` containing the following:
-#' \item{`forest`}{A list a decision trees.}
-#' \item{`method`}{the method used to fit the forest.}
+#' @return an object of class \code{rf} containing the following:
+#' \item{\code{forest}}{A list a decision trees.}
+#' \item{\code{method}}{the method used to fit the forest.}
 #' @author Eric Bridgeford
 #' @export
 badmf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=0.632, method="classification",
-                      depth.max=1L, size=1L, debug=FALSE, no.cores=1L, train.params=NULL) {
+                      depth.max=1L, size=1L, debug=FALSE, mc.cores=1L, train.params=NULL) {
   call <- match.call()
 
   if (missing(data))
@@ -58,7 +58,7 @@ badmf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=
 
   if (method == "classification") {
     fit <- do.call(badmf.class.fit, list(X[,-c(1)], Y, d, alpha, depth.max,
-                                         size, debug, no.cores, train.params))
+                                         size, debug, mc.cores, train.params))
     fit$formula <- formuler
   } else {
     stop("Not yet implemented!")
@@ -70,35 +70,35 @@ badmf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=
 #'
 #' Fit a Bayesian Decision-Making Forest Classifier.
 #'
-#' @param X the predictors. A `[n, p]` matrix.
-#' @param Y the responses. A `[n]` vector or, optionally, a factor.
-#' @param d the number of features to subsample at each node. Defaults to `sqrt(p)`.
-#' @param alpha the feature sampling prior. Corresponds to alpha for a Dirichlet distribution. If `NULL`, samples uniformly for the initial training iteration.
+#' @param X the predictors. A \code{[n, p]} matrix.
+#' @param Y the responses. A \code{[n]} vector or, optionally, a factor.
+#' @param d the number of features to subsample at each node. Defaults to \code{sqrt(p)}.
+#' @param alpha the feature sampling prior. Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly for the initial training iteration.
 #' @param ntrees the number of trees to construct. Defaults to 10.
 #' @param bagg the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-#' `0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.
+#' \code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements.
 #' @param depth.max the maximum allowed tree depth.
 #' @param size the minimum allowed number of samples for an individual node.
 #' @param debug whether to save the predictors and responses that are categorized
-#' @param no.cores the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.
+#' @param mc.cores the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.
 #' @param train.params if you wish to provide specialized parameters for training, a list containing the following:
 #' \itemize{
-#' \item{`d`}{the number of features to subsample at a split node.}
-#' \item{`ntrees`}{the number of trees to construct.}
-#' \item{`bagg`}{the relative size of the subsamples from the training set.}
-#' \item{`depth.max`}{the maximum allowed tree depth.}
-#' \item{`size`}{the minimum allowed number of samples for an individual node.}
+#' \item{\code{d}}{the number of features to subsample at a split node.}
+#' \item{\code{ntrees}}{the number of trees to construct.}
+#' \item{\code{bagg}}{the relative size of the subsamples from the training set.}
+#' \item{\code{depth.max}}{the maximum allowed tree depth.}
+#' \item{\code{size}}{the minimum allowed number of samples for an individual node.}
 #' }
 #' Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).
-#' @return an object of class `rf` containing the following:
-#' \item{`forest`}{A list a decision trees.}
-#' \item{`method`}{the method used to fit the forest.}
-#' \item{`prior`}{the hyperparameters of the Dirichlet Prior.}
-#' \item{`post`}{the hyperparamaters of the Dirichlet Posterior.}
+#' @return an object of class \code{rf.class} containing the following:
+#' \item{\code{forest}}{A list a decision trees.}
+#' \item{\code{method}}{the method used to fit the forest.}
+#' \item{\code{prior}}{the hyperparameters of the Dirichlet Prior.}
+#' \item{\code{post}}{the hyperparamaters of the Dirichlet Posterior.}
 #' @author Eric Bridgeford
 #' @export
 badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
-                            size=1L, debug=FALSE, no.cores=1L, train.params=NULL) {
+                            size=1L, debug=FALSE, mc.cores=1L, train.params=NULL) {
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
 
@@ -133,13 +133,13 @@ badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
 
   # train random forest classifier with specified prior
   fit.rf <- rf.class.fit(X, Y, train.params$d, alpha, train.params$ntrees, train.params$bagg,
-                         train.params$depth.max, train.params$size, no.cores=no.cores)
+                         train.params$depth.max, train.params$size, mc.cores=mc.cores)
 
   # construct dirichlet posterior
    alpha.post <- alpha + count.forest(fit.rf, p)
 
   # train random forest classifier with posterior
-   fit.rf <- rf.class.fit(X, Y, d, alpha, ntrees, bagg, depth.max, size, no.cores=no.cores)
+   fit.rf <- rf.class.fit(X, Y, d, alpha, ntrees, bagg, depth.max, size, mc.cores=mc.cores)
 
    fit.rf$method <- "badmf.class.fit"; fit.rf$alpha <- NULL; fit.rf$prior <- alpha; fit.rf$post <- alpha.post
    return(fit.rf)

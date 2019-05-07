@@ -2,10 +2,22 @@
 % Please edit documentation in R/predict.R
 \name{predict.split.node}
 \alias{predict.split.node}
-\title{A function for split node prediction}
+\title{A function for split node prediction
+pushes point down the tree recursively
+until it ends at a leaf node.}
 \usage{
 \method{predict}{split.node}(object, Xi, ...)
 }
+\arguments{
+\item{object}{the stump to use.}
+
+\item{Xi}{the poinbt.}
+}
+\value{
+the predic
+}
 \description{
 A function for split node prediction
+pushes point down the tree recursively
+until it ends at a leaf node.
 }

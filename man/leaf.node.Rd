@@ -7,7 +7,7 @@
 leaf.node(Y)
 }
 \arguments{
-\item{Y}{the responses at a leaf node, as a `[n]` factor.}
+\item{Y}{the responses at a leaf node, as a \code{[n]} factor.}
 }
 \value{
 the most probable response at the leaf.

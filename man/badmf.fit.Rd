@@ -6,7 +6,7 @@
 \usage{
 badmf.fit(formuler, data = NULL, d = NULL, alpha = NULL,
   ntrees = 10L, bagg = 0.632, method = "classification",
-  depth.max = 1L, size = 1L, debug = FALSE, no.cores = 1L,
+  depth.max = 1L, size = 1L, debug = FALSE, mc.cores = 1L,
   train.params = NULL)
 }
 \arguments{
@@ -15,16 +15,16 @@ badmf.fit(formuler, data = NULL, d = NULL, alpha = NULL,
 \item{data}{the data associated with the formuler. Note: if you want an intercept, you must
 add it ahead of time.}
 
-\item{d}{the number of features to subsample at a split node. Defaults to sqrt(nsamples).}
+\item{d}{the number of features to subsample at a split node. Defaults to \code{sqrt(nsamples)}.}
 
-\item{alpha}{the feature sampling prior. Should be a `[p]` vector, where `p` is the number of predictors.
-Corresponds to alpha for a Dirichlet distribution. If `NULL`, samples uniformly for the initial
+\item{alpha}{the feature sampling prior. Should be a \code{[p]} vector, where \code{p} is the number of predictors.
+Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly for the initial
 training iteration.}
 
 \item{ntrees}{the number of trees to construct. Defaults to 10.}
 
 \item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-`0 < bagg <= 1`. Each subsample will be `bagg*nsamples`` elements.}
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*nsamples} elements.}
 
 \item{method}{whether you want "classification" or "regression".}
 
@@ -34,25 +34,25 @@ training iteration.}
 
 \item{debug}{whether to save the predictors and responses that are categorized}
 
-\item{no.cores}{the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.}
+\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.}
 
 \item{train.params}{if you wish to provide specialized parameters for training, a list containing the following:
 \itemize{
-\item{`d`}{the number of features to subsample at a split node.}
-\item{`ntrees`}{the number of trees to construct.}
-\item{`bagg`}{the relative size of the subsamples from the training set.}
-\item{`depth.max`}{the maximum allowed tree depth.}
-\item{`size`}{the minimum allowed number of samples for an individual node.}
+\item{\code{d}}{the number of features to subsample at a split node.}
+\item{\code{ntrees}}{the number of trees to construct.}
+\item{\code{bagg}}{the relative size of the subsamples from the training set.}
+\item{\code{depth.max}}{the maximum allowed tree depth.}
+\item{\code{size}}{the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
 }
 \value{
-an object of class `rf` containing the following:
-\item{`forest`}{A list a decision trees.}
-\item{`method`}{the method used to fit the forest.}
+an object of class \code{rf} containing the following:
+\item{\code{forest}}{A list a decision trees.}
+\item{\code{method}}{the method used to fit the forest.}
 }
 \description{
-Fit a Bayesian Decision-Making Forest with a `stats`-like formula frontend interface.
+Fit a Bayesian Decision-Making Forest with a \code{stats}-like formula frontend interface.
 }
 \author{
 Eric Bridgeford

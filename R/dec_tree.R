@@ -1,16 +1,16 @@
 #' Bayesian Decision Tree Fit
 #'
-#' Fit a Bayesian Decision Tree with a `stats`-like formula frontend interface.
+#' Fit a Bayesian Decision Tree with a \code{stats}-like formula frontend interface.
 #'
 #' @param formuler ravioli ravioli give me the formuoli.
 #' @param data the data associated with the formuler. Note: if you want an intercept, you must
 #' add it ahead of time.
 #' @param d the number of features to subsample at a split node.
-#' @param alpha the prior parameters for the feature probabilities. A `[p]` vector. If `NULL`, samples uniformly.
+#' @param alpha the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.
 #' @param method whether you want "classification" or "regression".
 #' @param depth the maximum allowed tree depth.
-#' @param size the minimum allowed number of samples for an individual node. Defaults to `1`.
-#' @param debug whether to save the predictors and responses that are categorized. Defaults to `FALSE`.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1}.
+#' @param debug whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.
 #' @return A trained decision tree.
 #' @author Eric Bridgeford
 #' @export
@@ -50,26 +50,26 @@ dec_tree.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, method="classi
 }
 
 #' Fit a decision tree classifier.
-#' @param X the predictors. A `[n, p]` matrix.
-#' @param Y the responses. A `[n]` vector or, optionally, a factor.
-#' @param d the number of features to subsample at each node. Defaults to `NULL`, which tries every feature.
-#' @param alpha the prior parameters for the feature probabilities. A `[p]` vector. If `NULL`, samples uniformly.
-#' @param depth.max the maximum allowed tree depth. Defaults to `1`.
-#' @param size the minimum allowed number of samples for an individual node. Defaults to `1`.
-#' @param debug whether to save the predictors and responses that are categorized. Defaults to `FALSE`.
+#' @param X the predictors. A \code{[n, p]} matrix.
+#' @param Y the responses. A \code{[n]} vector or, optionally, a factor.
+#' @param d the number of features to subsample at each node. Defaults to \code{NULL}, which tries every feature.
+#' @param alpha the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.
+#' @param depth.max the maximum allowed tree depth. Defaults to \code{1}.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1}.
+#' @param debug whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.
 #' into a particular leaf node.
-#' @return an object of class `dec.tree` containing the following:
-#' \item{`tree`}{the decision tree.}
-#' \item{`X`}{The training predictors.}
-#' \item{`Y`}{the training responses.}
-#' \item{`d`}{d the number of features subsampled at each node.}
-#' \item{`alpha`}{the sampling distribution for the features. A `[p]` vector.}
-#' \item{`depth.max`}{the maximum allowed tree depth.}
-#' \item{`size`}{the maximum allowed tree depth.}
-#' \item{`debug`}{whether to save the predictors and responses that are categorized.}
+#' @return an object of class \code{dec.tree.class} containing the following:
+#' \item{\code{tree}}{the decision tree.}
+#' \item{\code{X}}{The training predictors.}
+#' \item{\code{Y}}{the training responses.}
+#' \item{\code{d}}{d the number of features subsampled at each node.}
+#' \item{\code{alpha}}{the sampling distribution for the features. A \code{[p]} vector.}
+#' \item{\code{depth.max}}{the maximum allowed tree depth.}
+#' \item{\code{size}}{the maximum allowed tree depth.}
+#' \item{\code{debug}}{whether to save the predictors and responses that are categorized.}
 #' @author Eric Bridgeford
 #' @export
-tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=1, size=1, debug=FALSE) {
+dec.tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=1, size=1, debug=FALSE) {
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
 
@@ -83,14 +83,14 @@ tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=1, size=1, debug=
   tree <- build.tree(get.split(X, Y, d, alpha), d, alpha, depth.max, size, 1, debug)
   return(structure(
     list(tree=tree, X=X, Y=Y, d=d, alpha=alpha, depth.max=depth.max, size=size, debug=debug),
-    class="dec.tree"
+    class="dec.tree.class"
   ))
 }
 
 #' Recursive Approach for Building Decision Tree
 #' @param split a particular split node.
 #' @param d the number of features to subsample.
-#' @param alpha the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.
+#' @param alpha the sampling distribution for the features. A \code{[p]} vector. If \code{NULL}, uses a uniform.
 #' @param depth.max the max tree depth.
 #' @param size the minimum number of elements at a particular.
 #' @param depth the current depth of the tree.
@@ -188,7 +188,7 @@ create.split <- function(X, Y, i, t) {
 #' @param X the predictors.
 #' @param Y the responses.
 #' @param d the number of features to subsample. Should be an integer 0 < d <= p.
-#' @param alpha the sampling distribution for the features. A [p] vector. If `NULL`, uses a uniform.
+#' @param alpha the sampling distribution for the features. A [p] vector. If \code{NULL}, uses a uniform.
 #' @return the best split.
 #' @importFrom MCMCpack rdirichlet
 #' @author Eric Bridgeford
@@ -250,7 +250,7 @@ impurity.idx <- function(groups) {
 
 #' Return Most Probable Class at a Leaf Node
 #'
-#' @param Y the responses at a leaf node, as a `[n]` factor.
+#' @param Y the responses at a leaf node, as a \code{[n]} factor.
 #' @return the most probable response at the leaf.
 #' @author Eric Bridgeford
 leaf.node <- function(Y) {

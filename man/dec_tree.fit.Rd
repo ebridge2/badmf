@@ -16,13 +16,13 @@ add it ahead of time.}
 
 \item{d}{the number of features to subsample at a split node.}
 
-\item{alpha}{the prior parameters for the feature probabilities. A `[p]` vector. If `NULL`, samples uniformly.}
+\item{alpha}{the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.}
 
 \item{method}{whether you want "classification" or "regression".}
 
-\item{size}{the minimum allowed number of samples for an individual node. Defaults to `1`.}
+\item{size}{the minimum allowed number of samples for an individual node. Defaults to \code{1}.}
 
-\item{debug}{whether to save the predictors and responses that are categorized. Defaults to `FALSE`.}
+\item{debug}{whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.}
 
 \item{depth}{the maximum allowed tree depth.}
 }
@@ -30,7 +30,7 @@ add it ahead of time.}
 A trained decision tree.
 }
 \description{
-Fit a Bayesian Decision Tree with a `stats`-like formula frontend interface.
+Fit a Bayesian Decision Tree with a \code{stats}-like formula frontend interface.
 }
 \author{
 Eric Bridgeford

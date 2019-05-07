@@ -13,7 +13,7 @@ get.split(X, Y, d, alpha)
 
 \item{d}{the number of features to subsample. Should be an integer 0 < d <= p.}
 
-\item{alpha}{the sampling distribution for the features. A [p] vector. If `NULL`, uses a uniform.}
+\item{alpha}{the sampling distribution for the features. A [p] vector. If \code{NULL}, uses a uniform.}
 }
 \value{
 the best split.

@@ -11,7 +11,7 @@ build.tree(split, d, alpha, depth.max, size, depth, debug = FALSE)
 
 \item{d}{the number of features to subsample.}
 
-\item{alpha}{the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.}
+\item{alpha}{the sampling distribution for the features. A \code{[p]} vector. If \code{NULL}, uses a uniform.}
 
 \item{depth.max}{the max tree depth.}
 
