@@ -28,7 +28,7 @@ Through `badmf`, we train an initial random forest using a slight augmentation t
 # Repo Contents
 
 - [R](./R): `R` package code.
-- [docs](./docs): package documentation, and usage of the `lolR` package on many real and simulated data examples.
+- [docs](./docs): package documentation, and usage of the `badmf` package on simulated examples.
 - [man](./man): package manual for help in R session.
 - [tests](./tests): `R` unit tests written using the `testthat` package.
 - [vignettes](./vignettes): `R` vignettes for R session html help pages.
@@ -64,10 +64,10 @@ Before setting up the `badmf` package, users should have `R` version 3.5.3 or hi
 
 ### Package dependencies
 
-Users should install the following packages prior to installing `lolR`, from an `R` terminal:
+Users should install the following packages prior to installing `badmf`, from an `R` terminal:
 
 ```
-install.packages(c('parallel', 'MCMCpack', 'forcats', 'MASS'))
+install.packages(c('parallel', 'MCMCpack', 'forcats', 'MASS', 'ggplot2'))
 ```
 
 ### Package Installation
@@ -76,7 +76,7 @@ From an `R` session, type:
 
 ```
 require(devtools)
-install_github('ebridge2/badmf', build_vignettes=TRUE, force=TRUE)  # install lol with the vignettes
+install_github('ebridge2/badmf', build_vignettes=TRUE, force=TRUE)  # install badmf with the vignettes
 require(badmf)
 vignette("badmf", package="badmf")  # view one of the basic vignettes
 ```
