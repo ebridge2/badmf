@@ -7,7 +7,7 @@
 badmf.fit(formuler, data = NULL, d = NULL, alpha = NULL,
   ntrees = 10L, bagg = 0.632, method = "classification",
   depth.max = 1L, size = 1L, debug = FALSE, mc.cores = 1L,
-  train.params = NULL)
+  train.params = NULL, ...)
 }
 \arguments{
 \item{formuler}{ravioli ravioli give me the formuoli.}
@@ -21,33 +21,34 @@ add it ahead of time.}
 Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly for the initial
 training iteration.}
 
-\item{ntrees}{the number of trees to construct. Defaults to 10.}
+\item{ntrees}{the number of trees to construct. Defaults to \code{10L}.}
 
-\item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-\code{0 < bagg <= 1}. Each subsample will be \code{bagg*nsamples} elements.}
+\item{bagg}{the relative size of the subsamples for the training set. A numeric s.t.
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements. Defaults to \code{0.632}.}
 
-\item{method}{whether you want "classification" or "regression".}
+\item{depth.max}{the maximum allowed tree depth. Defaults to \code{5L}.}
 
-\item{depth.max}{the maximum allowed tree depth.}
+\item{size}{the minimum allowed number of samples for an individual node. Defaults to \code{1L}.}
 
-\item{size}{the minimum allowed number of samples for an individual node.}
+\item{debug}{whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.}
 
-\item{debug}{whether to save the predictors and responses that are categorized}
+\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.
+Defaults to \code{1L}.}
 
-\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.}
-
-\item{train.params}{if you wish to provide specialized parameters for training, a list containing the following:
+\item{train.params}{if you wish to provide specialized parameters for training, a named list containing the following named elements:
 \itemize{
-\item{\code{d}}{the number of features to subsample at a split node.}
-\item{\code{ntrees}}{the number of trees to construct.}
-\item{\code{bagg}}{the relative size of the subsamples from the training set.}
-\item{\code{depth.max}}{the maximum allowed tree depth.}
-\item{\code{size}}{the minimum allowed number of samples for an individual node.}
+\item{\code{d} the number of features to subsample at a split node.}
+\item{\code{ntrees} the number of trees to construct.}
+\item{\code{bagg} the relative size of the subsamples from the training set.}
+\item{\code{depth.max} the maximum allowed tree depth.}
+\item{\code{size} the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
+
+\item{...}{trailing arguments.}
 }
 \value{
-an object of class \code{rf} containing the following:
+an object of class \code{rf.class} containing the following:
 \item{\code{forest}}{A list a decision trees.}
 \item{\code{method}}{the method used to fit the forest.}
 }

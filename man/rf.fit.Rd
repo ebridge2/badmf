@@ -5,8 +5,8 @@
 \title{Random Forest (RF)}
 \usage{
 rf.fit(formuler, data = NULL, d = NULL, alpha = NULL, ntrees = 10L,
-  bagg = 0.632, method = "classification", depth.max = 1L,
-  size = 1L, debug = FALSE, mc.coresx = 1L)
+  bagg = 0.632, method = "classification", depth.max = 5L,
+  size = 1L, debug = FALSE, mc.cores = 1L, ...)
 }
 \arguments{
 \item{formuler}{ravioli ravioli give me the formuoli.}
@@ -14,12 +14,13 @@ rf.fit(formuler, data = NULL, d = NULL, alpha = NULL, ntrees = 10L,
 \item{data}{the data associated with the formuler. Note: if you want an intercept, you must
 add it ahead of time.}
 
-\item{d}{the number of features to subsample at a split node. Defaults to \code{sqrt(nsamples)}.}
+\item{d}{the number of features to subsample at a split node. Defaults to \code{as.integer(round(sqrt(p)))}, where \code{p}
+is the dimensionality of the predictor feature space.}
 
 \item{alpha}{the feature sampling prior. Should be a \code{[p]} vector, where \code{p} is the number of predictors.
 Corresponds to alpha for a Dirichlet distribution.   If \code{NULL}, samples uniformly.}
 
-\item{ntrees}{the number of trees to construct. Defaults to \code{10}.}
+\item{ntrees}{the number of trees to construct. Defaults to \code{10L}.}
 
 \item{bagg}{the relative size of the subsamples for the training set. A numeric s.t.
 \code{0 < bagg <= 1}. Each subsample will be \code{bagg*nsamples} elements. Defaults to \code{0.632}.}
@@ -32,11 +33,11 @@ Corresponds to alpha for a Dirichlet distribution.   If \code{NULL}, samples uni
 
 \item{debug}{whether to save the predictors and responses that are categorized}
 
-\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.coresx <= parallel::detectCores()}.
+\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
 }
 \value{
-an object of class \code{rf} containing the following:
+an object of class \code{rf.class} containing the following:
 \item{\code{forest}}{A list a decision trees.}
 \item{\code{method}}{the method used to fit the forest.}
 }

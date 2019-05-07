@@ -5,40 +5,32 @@
 \title{Random Forest (RF) for Classification}
 \usage{
 rf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
-  bagg = 0.632, depth.max = 1L, size = 1L, debug = FALSE,
-  mc.coresx = 1L)
+  bagg = 0.632, depth.max = 5L, size = 1L, debug = FALSE,
+  mc.cores = 1L, ...)
 }
 \arguments{
 \item{X}{the predictors. A \code{[n, p]} matrix.}
 
 \item{Y}{the responses. A \code{[n]} vector or, optionally, a factor.}
 
-\item{d}{the number of features to subsample at each node. Defaults to \code{sqrt(p)}.}
+\item{d}{the number of features to subsample at a split node. Defaults to \code{as.integer(round(sqrt(p)))}, where \code{p}
+is the dimensionality of the predictor feature space.}
 
 \item{alpha}{the feature sampling prior. Corresponds to alpha for a Dirichlet distribution. If \code{NULL}, samples uniformly.}
 
-\item{ntrees}{the number of trees to construct. Defaults to 10.}
+\item{ntrees}{the number of trees to construct. Defaults to \code{10L}.}
 
-\item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements.}
+\item{bagg}{the relative size of the subsamples for the training set. A numeric s.t.
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements. Defaults to \code{0.632}.}
 
-\item{depth.max}{the maximum allowed tree depth.}
+\item{depth.max}{the maximum allowed tree depth. Defaults to \code{5L}.}
 
-\item{size}{the minimum allowed number of samples for an individual node.}
+\item{size}{the minimum allowed number of samples for an individual node. Defaults to \code{1L}.}
 
-\item{debug}{whether to save the predictors and responses that are categorized}
+\item{debug}{whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.}
 
-\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.coresx <= parallel::detectCores()}.}
-
-\item{train.params}{if you wish to provide specialized parameters for training, a list containing the following:
-\itemize{
-\item{\code{d}}{the number of features to subsample at a split node.}
-\item{\code{ntrees}}{the number of trees to construct.}
-\item{\code{bagg}}{the relative size of the subsamples from the training set.}
-\item{\code{depth.max}}{the maximum allowed tree depth.}
-\item{\code{size}}{the minimum allowed number of samples for an individual node.}
-}
-Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
+\item{mc.cores}{the number of cores to use. Should be \code{0 < mc.cores <= parallel::detectCores()}.
+Defaults to \code{1L}.}
 }
 \value{
 an object of class \code{rf.class} containing the following:

@@ -18,6 +18,12 @@ rf.input.validator(d, ntrees, bagg, depth.max, depth, size)
 
 \item{size}{the minimum allowed number of samples for an individual node.}
 }
+\value{
+nothing; throws an error if the input is invalid.
+}
 \description{
 Input Validator
+}
+\author{
+Eric Bridgeford
 }

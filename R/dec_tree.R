@@ -5,24 +5,34 @@
 #' @param formuler ravioli ravioli give me the formuoli.
 #' @param data the data associated with the formuler. Note: if you want an intercept, you must
 #' add it ahead of time.
-#' @param d the number of features to subsample at a split node.
+#' @param d the number of features to subsample at each node. Defaults to \code{NULL}, which tries every feature.
 #' @param alpha the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.
-#' @param method whether you want "classification" or "regression".
-#' @param depth the maximum allowed tree depth.
-#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1}.
+#' Defaults to \code{NULL}.
+#' @param method whether you want "classification" or "regression". Defaults to \code{"classification"}.
+#' @param depth.max the maximum allowed tree depth. Defaults to \code{5L}.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1L}.
 #' @param debug whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.
-#' @return A trained decision tree.
+#' @param ... trailing arguments.
+#' @return an object of class \code{dec.tree.class} containing the following:
+#' \item{\code{tree}}{the decision tree.}
+#' \item{\code{X}}{The training predictors.}
+#' \item{\code{Y}}{the training responses.}
+#' \item{\code{d}}{d the number of features subsampled at each node.}
+#' \item{\code{alpha}}{the sampling distribution for the features. A \code{[p]} vector.}
+#' \item{\code{depth.max}}{the maximum allowed tree depth.}
+#' \item{\code{size}}{the maximum allowed tree depth.}
+#' \item{\code{debug}}{whether to save the predictors and responses that are categorized.}
 #' @author Eric Bridgeford
 #' @export
 dec_tree.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, method="classification",
-                         depth.max=1, size=1, debug=FALSE) {
+                         depth.max=5L, size=1L, debug=FALSE, ...) {
   # miscellaneous formula jargon
   call <- match.call()
 
   if (missing(data))
-    data <- environment(formula)
+    data <- environment(formuler)
   mf <- match.call(expand.dots = FALSE)
-  m <- match(c("formula", "data", "subset"), names(mf), 0L)
+  m <- match(c("formuler", "data"), names(mf), 0L)
   mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(stats::model.frame)
@@ -54,8 +64,9 @@ dec_tree.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, method="classi
 #' @param Y the responses. A \code{[n]} vector or, optionally, a factor.
 #' @param d the number of features to subsample at each node. Defaults to \code{NULL}, which tries every feature.
 #' @param alpha the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.
-#' @param depth.max the maximum allowed tree depth. Defaults to \code{1}.
-#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1}.
+#' Defaults to \code{NULL}.
+#' @param depth.max the maximum allowed tree depth. Defaults to \code{5L}.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to \code{1L}.
 #' @param debug whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.
 #' into a particular leaf node.
 #' @return an object of class \code{dec.tree.class} containing the following:
@@ -69,16 +80,31 @@ dec_tree.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, method="classi
 #' \item{\code{debug}}{whether to save the predictors and responses that are categorized.}
 #' @author Eric Bridgeford
 #' @export
-dec.tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=1, size=1, debug=FALSE) {
+dec.tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=5L, size=1L, debug=FALSE) {
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
 
   if (!ifelse(is.integer(d), d <= p & d > 0, !is.null(d))) {
     stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
   }
+
   if (is.null(d)) {
-    d <- p
+    d <- as.integer(p)
   }
+
+  if (!ifelse(is.integer(depth.max), depth.max > 0, FALSE)) {
+    stop("You have not entered a valid value for depth.max.")
+  }
+
+  if (!ifelse(is.integer(size), size > 0, FALSE)) {
+    stop("You have not passed a valid value for size.")
+  }
+
+  # if alpha is NULL, sample uniformly
+  if (!ifelse(is.numeric(alpha), all(alpha > 0), is.null(alpha))) {
+    stop("You have not entered a valid Dirichlet prior. Should be NULL, or a p vector with all values should be > 0.")
+  }
+
   # build the tree with the Decision Tree Algorithm
   tree <- build.tree(get.split(X, Y, d, alpha), d, alpha, depth.max, size, 1, debug)
   return(structure(

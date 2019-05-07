@@ -20,8 +20,9 @@ class.opts=list(list(ntrees=9L, depth.max=4L, size=2L, mc.cores=1L),
                 list(depth.max=10L, size=2L))
 
 # additional arguments for each simulation scenario
-sims.algs <- list(discr.sims.linear, lol.sims.rtrunk, lol.sims.rtrunk,
-                  lol.sims.fat_tails, lol.sims.cross, discr.sims.radial)
+sims.algs <- list(badmf.sims.linear, badmf.sims.rtrunk, badmf.sims.rtrunk,
+                  badmf.sims.fat_tails, badmf.sims.cross, badmf.sims.xor,
+                  badmf.sims.radial)
 opt_args <- list(list(K=2, signal.lshift=0),
                  list(),
                  list(K=4),

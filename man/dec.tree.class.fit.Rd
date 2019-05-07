@@ -4,8 +4,8 @@
 \alias{dec.tree.class.fit}
 \title{Fit a decision tree classifier.}
 \usage{
-dec.tree.class.fit(X, Y, d = NULL, alpha = NULL, depth.max = 1,
-  size = 1, debug = FALSE)
+dec.tree.class.fit(X, Y, d = NULL, alpha = NULL, depth.max = 5L,
+  size = 1L, debug = FALSE)
 }
 \arguments{
 \item{X}{the predictors. A \code{[n, p]} matrix.}
@@ -14,11 +14,12 @@ dec.tree.class.fit(X, Y, d = NULL, alpha = NULL, depth.max = 1,
 
 \item{d}{the number of features to subsample at each node. Defaults to \code{NULL}, which tries every feature.}
 
-\item{alpha}{the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.}
+\item{alpha}{the prior parameters for the feature probabilities. A \code{[p]} vector. If \code{NULL}, samples uniformly.
+Defaults to \code{NULL}.}
 
-\item{depth.max}{the maximum allowed tree depth. Defaults to \code{1}.}
+\item{depth.max}{the maximum allowed tree depth. Defaults to \code{5L}.}
 
-\item{size}{the minimum allowed number of samples for an individual node. Defaults to \code{1}.}
+\item{size}{the minimum allowed number of samples for an individual node. Defaults to \code{1L}.}
 
 \item{debug}{whether to save the predictors and responses that are categorized. Defaults to \code{FALSE}.
 into a particular leaf node.}
