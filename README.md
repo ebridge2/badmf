@@ -10,7 +10,7 @@
 
 ## Overview
 
-A package for fitting Bayesian Decision-Making Forests (BaD-MFs). At each node of a decision tree, a subset of features is chosen from the target feature space for determination of the optimal split criterion. In a simple classification problem, for instance, a single feature is selected from `d < p` possible choices. These features are selected uniformly and at random,and no data outside of the data seen by the tree may be used for assessing the split criterion.
+A package for fitting Bayesian Decision-Making Forests (BaD-MFs). At each node of a decision tree, a subset of features is chosen from the target feature space for determination of the optimal split criterion. In a simple classification problem, for instance, a single feature is selected from `d < p` possible choices. These features are selected uniformly and at random, and no data outside of the data seen by the tree may be used for assessing the split criterion or determining the features to attempt at a given split.
 
 In a random forest, numerous decision trees are aggregated to construct an ensemble learner. Trees are constructed using 
 Bootstrap AGGregation (bagging), through which each tree sees a nonparametric sample from the target dataset upon which 
