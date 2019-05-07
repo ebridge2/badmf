@@ -8,6 +8,9 @@
 - [Issues](https://github.com/ebridge2/badmf/issues)
 - [Citation](#citation)
 
+![A BaD-MF](https://media0.giphy.com/media/l2YWxte7sJB2XuE8M/giphy.gif)
+
+
 ## Overview
 
 A package for fitting Bayesian Decision-Making Forests (BaD-MFs) using the `R` programming language. At each node of a decision tree, a subset of features is chosen from the target feature space for determination of the optimal split criterion. In a simple classification problem, for instance, a single feature is selected from `d < p` possible choices. These features are selected uniformly and at random, and no data outside of the data seen by the tree may be used for assessing the split criterion or determining the features to attempt at a given split.
