@@ -67,7 +67,7 @@ Before setting up the `badmf` package, users should have `R` version 3.5.3 or hi
 Users should install the following packages prior to installing `lolR`, from an `R` terminal:
 
 ```
-install.packages(c('parallel', 'MCMCpack', 'forcats'))
+install.packages(c('parallel', 'MCMCpack', 'forcats', 'MASS'))
 ```
 
 ### Package Installation
