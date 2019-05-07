@@ -1,0 +1,63 @@
+---
+title: "Bayesian Decision-Making Forest (BaD-MF)"
+author: "Eric Bridgeford"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{badmf}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+require(badmf)
+require(ggplot2)
+require(MASS)
+n=400
+d=30
+```
+
+# Bayesian Decision-Making Forest (BaD-MF)
+
+In this notebook, we will investigate how to use the nearest centroid classifier.
+
+We simulate `400` examples of `30` dimensional points:
+
+```{r simsetup, message=FALSE}
+# generate simulation data
+testdat <- badmf.sims.rtrunk(n, d)
+X <- testdat$X
+Y <- testdat$Y
+
+data <- data.frame(x1=X[,1], x2=X[,2], y=Y)
+data$y <- factor(data$y)
+ggplot(data, aes(x=x1, y=x2, color=y)) +
+  geom_point() +
+  xlab("x1") +
+  ylab("x2") +
+  ggtitle("Simulated Data") +
+  xlim(-10, 10) +
+  ylim(-10, 10)
+```
+
+## Training
+
+```{r train}
+# reorder the points
+set.seed(1234)
+reord <- sample(n, replace=FALSE)
+# split into a training and testing set
+train.idx <- reord[1:(4*n/5)]; test.idx <- reord[(4*n/5+1):n]
+X.train <- X[train.idx,,drop=FALSE]; Y.train <- Y[train.idx]
+X.test <- X[test.idx,,drop=FALSE]; Y.test <- Y[test.idx]
+
+set.seed(1234)
+fit.badmf <- badmf.class.fit(X.train, Y.train)
+```
+
+```{r test}
+set.seed(1234)
+Y.pred <- predict(fit.badmf, X.test)
+
+print(sprintf("Misclassification Rate: %.3f", 1 - mean(Y.pred == Y.test)))
+```

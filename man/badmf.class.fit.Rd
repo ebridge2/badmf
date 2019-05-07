@@ -5,8 +5,8 @@
 \title{Bayesian Decision-Making Forest (BaD-MF) for Classification}
 \usage{
 badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
-  depth.max = 1L, size = 1L, debug = FALSE, mc.cores = 1L,
-  train.params = NULL, ...)
+  bagg = 0.632, depth.max = 10L, size = 5L, debug = FALSE,
+  mc.cores = 1L, train.params = NULL, ...)
 }
 \arguments{
 \item{X}{the predictors. A \code{[n, p]} matrix.}
@@ -19,6 +19,9 @@ badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
 for the initial training iteration.}
 
 \item{ntrees}{the number of trees to construct. Defaults to \code{10L}.}
+
+\item{bagg}{the relative size of the subsamples for the training set. A numeric s.t.
+\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements. Defaults to \code{0.632}.}
 
 \item{depth.max}{the maximum allowed tree depth. Defaults to \code{5L}.}
 
@@ -41,9 +44,6 @@ following named elements:
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
 
 \item{...}{trailing arguments.}
-
-\item{bagg}{the relative size of the subsamples for the training set. A numeric s.t.
-\code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements. Defaults to \code{0.632}.}
 }
 \value{
 an object of class \code{rf.class} containing the following:

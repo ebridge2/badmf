@@ -108,7 +108,7 @@ dec.tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=5L, size=1L, 
   # build the tree with the Decision Tree Algorithm
   tree <- build.tree(get.split(X, Y, d, alpha), d, alpha, depth.max, size, 1, debug)
   return(structure(
-    list(tree=tree, X=X, Y=Y, d=d, alpha=alpha, depth.max=depth.max, size=size, debug=debug),
+    list(tree=tree, X=X, Y=Y, p=p, d=d, alpha=alpha, depth.max=depth.max, size=size, debug=debug),
     class="dec.tree.class"
   ))
 }
@@ -285,4 +285,49 @@ leaf.node <- function(Y) {
   })
   return(structure(list(vote=factor(levels(Y)[which.max(gr.ct)],
                                     levels = levels(Y))), class="leaf.node"))
+}
+
+#' Count Features in a Decision Tree
+#'
+#' A function to count the feature utilization in a Decision Tree.
+#'
+#' @param object an object of class \code{dec.tree.class}.
+#' @param ... trailing args.
+#' @return a vector containing the number of times each feature
+#' is used at a split node.
+#' @author Eric Bridgeford
+#' @export
+count.features.dec.tree.class <- function(object, ...) {
+  feat.usage <- table(count.features(object$tree))
+  counts <- rep(0, object$p)
+  names(counts) <- 1:object$p
+  counts[names(feat.usage)] <- as.numeric(feat.usage)
+  return(counts)
+}
+
+#' Count Features Leaf
+#'
+#' A default to return NULL and stop recursion when counting features
+#' in a stump once we reach a leaf node.
+#'
+#' @param object an object of class \code{leaf.node}.
+#' @param ... trailing args.
+#' @return a vector containing the number of times each feature is used
+#' at a split node.
+#' @author Eric Bridgeford
+count.features.leaf.node <- function(object, ...) {
+  return(NULL)
+}
+
+#' Count Features Stump
+#'
+#' A function to count the Usage of Features At or Below a Split Node (a Stump)
+#'
+#' @param object an object of class \code{split.node}.
+#' @param ... trailing args.
+#' @return a vector containing the number of times each feature is used
+#' at a split node.
+#' @author Eric Bridgeford
+count.features.split.node <- function(object, ...) {
+  return(c(object$feature, count.features(object$left), count.features(object$right)))
 }

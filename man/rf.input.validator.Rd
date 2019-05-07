@@ -4,10 +4,12 @@
 \alias{rf.input.validator}
 \title{Input Validator}
 \usage{
-rf.input.validator(d, ntrees, bagg, depth.max, depth, size)
+rf.input.validator(d, p, ntrees, bagg, depth.max, depth, size)
 }
 \arguments{
 \item{d}{the number of features to subsample at each node. Defaults to \code{sqrt(p)}.}
+
+\item{p}{the number of features total.}
 
 \item{ntrees}{the number of trees to construct. Defaults to \code{10}.}
 

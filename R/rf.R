@@ -100,19 +100,19 @@ rf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L,  bagg=0.632, dept
     stop("You have not entered a valid Dirichlet prior. Should be NULL, or a p vector with all values should be > 0.")
   }
 
-  rf.input.validator(d=d, ntrees=ntrees, bagg=bagg, depth.max=depth.max, size=size)
+  rf.input.validator(d=d, p=p, ntrees=ntrees, bagg=bagg, depth.max=depth.max, size=size)
 
   fit <- structure(list(forest=mclapply(1:ntrees, function(i) {
     ss <- sample(1:n, round(bagg*n))
     Xs <- X[ss,,drop=FALSE]; Ys <- Y[ss]
-    print(dim(Xs)); print(length(Ys)); print(Ys)
-    tree.class.fit(Xs, Ys, d, alpha, depth.max, size, debug)
+    dec.tree.class.fit(Xs, Ys, d, alpha, depth.max, size, debug)
   }, mc.cores=mc.cores), method="rf.class.fit", alpha=alpha), class="rf.class")
   return(fit)
 }
 
 #' Input Validator
 #' @param d the number of features to subsample at each node. Defaults to \code{sqrt(p)}.
+#' @param p the number of features total.
 #' @param ntrees the number of trees to construct. Defaults to \code{10}.
 #' @param bagg the relative size of the subsamples for the training set. Defaults to \code{0.632}. A numeric s.t.
 #' \code{0 < bagg <= 1}. Each subsample will be \code{bagg*n} elements.
@@ -120,7 +120,7 @@ rf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L,  bagg=0.632, dept
 #' @param size the minimum allowed number of samples for an individual node.
 #' @return nothing; throws an error if the input is invalid.
 #' @author Eric Bridgeford
-rf.input.validator <- function(d, ntrees, bagg, depth.max, depth, size) {
+rf.input.validator <- function(d, p, ntrees, bagg, depth.max, depth, size) {
   if (!ifelse(is.integer(d), d <= p & d > 0, FALSE)) {
     stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
   }
@@ -140,4 +140,21 @@ rf.input.validator <- function(d, ntrees, bagg, depth.max, depth, size) {
   if (!ifelse(is.integer(size), size > 0, FALSE)) {
     stop("You have not passed a valid value for size. Should be a positive integer.")
   }
+}
+
+#' Count Feature Utilization
+#'
+#' A function to count the number of times a feature is used
+#' in a forest at split nodes.
+#'
+#' @param object a fit random forest of class \code{rf.class}.
+#' @param ... trailing args.
+#' @return the counts of all features in the forest.
+#' @author Eric Bridgeford
+#' @export
+count.features.rf.class <- function(object, ...) {
+  rf.ct <- Reduce("+", lapply(object$forest, function(tree) {
+    count.features(tree)
+  }))
+  return(rf.ct)
 }

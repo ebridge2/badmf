@@ -33,7 +33,7 @@
 #' @author Eric Bridgeford
 #' @export
 badmf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=0.632, method="classification",
-                      depth.max=1L, size=1L, debug=FALSE, mc.cores=1L, train.params=NULL, ...) {
+                      depth.max=5L, size=1L, debug=FALSE, mc.cores=1L, train.params=NULL, ...) {
   call <- match.call()
 
   if (missing(data))
@@ -102,7 +102,7 @@ badmf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=
 #' \item{\code{post}}{the hyperparamaters of the Dirichlet Posterior.}
 #' @author Eric Bridgeford
 #' @export
-badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
+badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, bagg=0.632, depth.max=5L,
                             size=1L, debug=FALSE, mc.cores=1L, train.params=NULL, ...) {
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
@@ -119,12 +119,13 @@ badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
       stop("You have not entered a valid Dirichlet prior. All values should be > 0.")
     }
   }
-  rf.input.validator(d=d, ntrees=ntrees, bagg=bagg, depth.max=depth.max, size=size)
+  rf.input.validator(d=d, p=p, ntrees=ntrees, bagg=bagg, depth.max=depth.max, size=size)
   if (is.null(train.params)) {
     train.params <- list()
   }
   # initialize training vector
   train.params <- list(d=ifelse(!is.null(train.params$d), train.params$d, d),
+                       p=p,
                        ntrees=ifelse(!is.null(train.params$ntrees), train.params$ntrees, ntrees),
                        bagg=ifelse(!is.null(train.params$bagg), train.params$bagg, bagg),
                        depth.max=ifelse(!is.null(train.params$depth.max), train.params$depth.max, depth.max),
@@ -141,7 +142,7 @@ badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
                          train.params$depth.max, train.params$size, mc.cores=mc.cores)
 
   # construct dirichlet posterior
-   alpha.post <- alpha + count.forest(fit.rf, p)
+   alpha.post <- alpha + count.features(fit.rf)
 
   # train random forest classifier with posterior
    fit.rf <- rf.class.fit(X, Y, d, alpha, ntrees, bagg, depth.max, size, mc.cores=mc.cores)
@@ -150,18 +151,4 @@ badmf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
    return(fit.rf)
 }
 
-count.forest <- function(rf.fit, p) {
-  rf.ct <- do.call(c, lapply(rf.fit$forest, function(tree) {
-    count.tree(tree$tree)
-  })) %>%
-    table
-  counts <- rep(0, p)
-  counts[as.numeric(names(rf.ct))] <- as.numeric(rf.ct)
-  return(counts)
-}
-count.tree <- function(tree) {
-  if (class(tree) == "leaf.node") {
-    return(NULL)
-  }
-  return(c(tree$feature, count.tree(tree$left), count.tree(tree$right)))
-}
+
