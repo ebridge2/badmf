@@ -23,6 +23,7 @@ predict.split.node <- function(object, Xi, ...) {
     return(predict(object$right, Xi))
   }
 }
+
 #' A function for leaf node prediction
 predict.leaf.node <- function(object, ...) {
   return(object$vote)

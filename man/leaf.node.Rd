@@ -7,11 +7,14 @@
 leaf.node(Y)
 }
 \arguments{
-\item{Y}{the responses at a leaf node.}
+\item{Y}{the responses at a leaf node, as a `[n]` factor.}
 }
 \value{
 the most probable response at the leaf.
 }
 \description{
 Return Most Probable Class at a Leaf Node
+}
+\author{
+Eric Bridgeford
 }

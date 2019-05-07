@@ -16,7 +16,7 @@ add it ahead of time.}
 
 \item{d}{the number of features to subsample at a split node.}
 
-\item{alpha}{the sampling distribution for the features. A `[p]` vector. If `NULL`, samples uniformly.}
+\item{alpha}{the prior parameters for the feature probabilities. A `[p]` vector. If `NULL`, samples uniformly.}
 
 \item{method}{whether you want "classification" or "regression".}
 

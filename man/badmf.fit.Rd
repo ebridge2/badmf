@@ -28,6 +28,8 @@ training iteration.}
 
 \item{method}{whether you want "classification" or "regression".}
 
+\item{depth.max}{the maximum allowed tree depth.}
+
 \item{size}{the minimum allowed number of samples for an individual node.}
 
 \item{debug}{whether to save the predictors and responses that are categorized}
@@ -39,12 +41,10 @@ training iteration.}
 \item{`d`}{the number of features to subsample at a split node.}
 \item{`ntrees`}{the number of trees to construct.}
 \item{`bagg`}{the relative size of the subsamples from the training set.}
-\item{`depth`}{the maximum allowed tree depth.}
+\item{`depth.max`}{the maximum allowed tree depth.}
 \item{`size`}{the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
-
-\item{depth}{the maximum allowed tree depth.}
 }
 \value{
 an object of class `rf` containing the following:

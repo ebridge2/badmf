@@ -26,14 +26,14 @@ Corresponds to alpha for a Dirichlet distribution.   If `NULL`, samples uniforml
 
 \item{method}{whether you want "classification" or "regression".}
 
+\item{depth.max}{the maximum allowed tree depth.}
+
 \item{size}{the minimum allowed number of samples for an individual node.}
 
 \item{debug}{whether to save the predictors and responses that are categorized}
 
 \item{no.cores}{the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
-
-\item{depth}{the maximum allowed tree depth.}
 }
 \value{
 an object of class `rf` containing the following:

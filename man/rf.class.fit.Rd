@@ -5,7 +5,8 @@
 \title{Random Forest (RF) for Classification}
 \usage{
 rf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
-  depth.max = 1L, size = 1L, debug = FALSE, no.cores = 1L)
+  bagg = 0.632, depth.max = 1L, size = 1L, debug = FALSE,
+  no.cores = 1L)
 }
 \arguments{
 \item{X}{the predictors. A `[n, p]` matrix.}
@@ -18,23 +19,23 @@ rf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
 
 \item{ntrees}{the number of trees to construct. Defaults to 10.}
 
+\item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
+`0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.}
+
+\item{depth.max}{the maximum allowed tree depth.}
+
 \item{size}{the minimum allowed number of samples for an individual node.}
 
 \item{debug}{whether to save the predictors and responses that are categorized}
 
 \item{no.cores}{the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.}
 
-\item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
-`0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.}
-
-\item{depth}{the maximum allowed tree depth.}
-
 \item{train.params}{if you wish to provide specialized parameters for training, a list containing the following:
 \itemize{
 \item{`d`}{the number of features to subsample at a split node.}
 \item{`ntrees`}{the number of trees to construct.}
 \item{`bagg`}{the relative size of the subsamples from the training set.}
-\item{`depth`}{the maximum allowed tree depth.}
+\item{`depth.max`}{the maximum allowed tree depth.}
 \item{`size`}{the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
@@ -43,6 +44,7 @@ Any unset parameters will default to the values provided above (or the correspon
 an object of class `rf` containing the following:
 \item{`forest`}{A list a decision trees.}
 \item{`method`}{the method used to fit the forest.}
+\item{`alpha`}{the hyperparams for sampling distn of feature probabilities.}
 }
 \description{
 Fit a Random Forest Classifier.

@@ -14,7 +14,7 @@ tree.class.fit(X, Y, d = NULL, alpha = NULL, depth.max = 1,
 
 \item{d}{the number of features to subsample at each node. Defaults to `NULL`, which tries every feature.}
 
-\item{alpha}{the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.}
+\item{alpha}{the prior parameters for the feature probabilities. A `[p]` vector. If `NULL`, samples uniformly.}
 
 \item{depth.max}{the maximum allowed tree depth. Defaults to `1`.}
 

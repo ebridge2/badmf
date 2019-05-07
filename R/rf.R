@@ -12,7 +12,7 @@
 #' @param bagg the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
 #' `0 < bagg <= 1`. Each subsample will be `bagg*nsamples`` elements.
 #' @param method whether you want "classification" or "regression".
-#' @param depth the maximum allowed tree depth.
+#' @param depth.max the maximum allowed tree depth.
 #' @param size the minimum allowed number of samples for an individual node.
 #' @param debug whether to save the predictors and responses that are categorized
 #' @param no.cores the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.
@@ -67,7 +67,7 @@ rf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=0.6
 #' @param ntrees the number of trees to construct. Defaults to 10.
 #' @param bagg the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
 #' `0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.
-#' @param depth the maximum allowed tree depth.
+#' @param depth.max the maximum allowed tree depth.
 #' @param size the minimum allowed number of samples for an individual node.
 #' @param debug whether to save the predictors and responses that are categorized
 #' @param no.cores the number of cores to use. Should be `0 < no.cores <= parallel::detectCores()`.
@@ -76,57 +76,60 @@ rf.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, ntrees=10L, bagg=0.6
 #' \item{`d`}{the number of features to subsample at a split node.}
 #' \item{`ntrees`}{the number of trees to construct.}
 #' \item{`bagg`}{the relative size of the subsamples from the training set.}
-#' \item{`depth`}{the maximum allowed tree depth.}
+#' \item{`depth.max`}{the maximum allowed tree depth.}
 #' \item{`size`}{the minimum allowed number of samples for an individual node.}
 #' }
 #' Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).
 #' @return an object of class `rf` containing the following:
 #' \item{`forest`}{A list a decision trees.}
 #' \item{`method`}{the method used to fit the forest.}
+#' \item{`alpha`}{the hyperparams for sampling distn of feature probabilities.}
 #' @author Eric Bridgeford
-#' @importFrom parallel detectCores, mclapply
+#' @importFrom parallel mclapply
 #' @export
-rf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L, depth.max=1L,
+rf.class.fit <- function(X, Y, d=NULL, alpha=NULL, ntrees=10L,  bagg=0.632, depth.max=1L,
                          size=1L, debug=FALSE, no.cores=1L) {
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
 
   if (is.null(d)) {
-    d <- round(sqrt(p))
+    d <- as.integer(round(sqrt(p)))
+  }
+
+  if (!is.integer(no.cores) || no.cores > detectCores()) {
+    stop("You have passed an invalid entry for no.cores.")
   }
 
   # if alpha is null, sample uniformly with Dir(1, 1, ...)
-  if (is.null(alpha)) {
-    alpha <- rep(1, p)
-  } else {
-    if (!ifelse(is.numeric(alpha), all(alpha > 0), FALSE)) {
-      stop("You have not entered a valid Dirichlet prior. All values should be > 0.")
-    }
+  if (!ifelse(is.numeric(alpha), all(alpha > 0), is.null(alpha))) {
+    stop("You have not entered a valid Dirichlet prior. All values should be > 0.")
   }
-  rf.input.validator(d=d, ntrees=ntrees, bagg=bagg, depth=depth, size=size)
-  tryCatch({
-    do.call(rf.input.validator, c(train.params, list(no.cores=no.cores)))
-  }, error=function(e) {
-    print("Your training parameters are invalid.")
-    stop(e)
-  })
+  rf.input.validator(d=d, ntrees=ntrees, bagg=bagg, depth.max=depth.max, size=size)
+
   fit <- structure(list(forest=mclapply(1:ntrees, function(i) {
-    tree.class.fit(X, Y, d, depth.max, size, debug)
-  }), method="rf.class.fit"), class="rf.class")
+    ss <- sample(1:n, round(bagg*n))
+    Xs <- X[ss,,drop=FALSE]; Ys <- Y[ss]
+    print(dim(Xs)); print(length(Ys)); print(Ys)
+    tree.class.fit(Xs, Ys, d, alpha, depth.max, size, debug)
+  }, mc.cores=no.cores), method="rf.class.fit", alpha=alpha), class="rf.class")
   return(fit)
 }
 
-rf.input.validator <- function(d, ntrees, bagg, depth, size, no.cores) {
+#' Input Validator
+#' @param d the number of features to subsample at each node. Defaults to `sqrt(p)`.
+#' @param ntrees the number of trees to construct. Defaults to 10.
+#' @param bagg the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
+#' `0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.
+#' @param depth.max the maximum allowed tree depth.
+#' @param size the minimum allowed number of samples for an individual node.
+#' @importFrom parallel detectCores
+rf.input.validator <- function(d, ntrees, bagg, depth.max, depth, size) {
   if (!ifelse(is.integer(d), d <= p & d > 0, FALSE)) {
     stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
   }
 
   if (!is.integer(ntrees) || ntrees < 0) {
     stop("You have passed an invalid entry for ntrees.")
-  }
-
-  if (!is.integer(no.cores) || no.cores > detectCores()) {
-    stop("You have passed an invalid entry for no.cores.")
   }
 
   if (!ifelse(is.numeric(bagg), bagg <= 1 & bagg > 0, FALSE)) {

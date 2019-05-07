@@ -19,6 +19,8 @@ badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
 
 \item{ntrees}{the number of trees to construct. Defaults to 10.}
 
+\item{depth.max}{the maximum allowed tree depth.}
+
 \item{size}{the minimum allowed number of samples for an individual node.}
 
 \item{debug}{whether to save the predictors and responses that are categorized}
@@ -30,20 +32,20 @@ badmf.class.fit(X, Y, d = NULL, alpha = NULL, ntrees = 10L,
 \item{`d`}{the number of features to subsample at a split node.}
 \item{`ntrees`}{the number of trees to construct.}
 \item{`bagg`}{the relative size of the subsamples from the training set.}
-\item{`depth`}{the maximum allowed tree depth.}
+\item{`depth.max`}{the maximum allowed tree depth.}
 \item{`size`}{the minimum allowed number of samples for an individual node.}
 }
 Any unset parameters will default to the values provided above (or the corresponding defaults if unprovided).}
 
 \item{bagg}{the relative size of the subsamples for the training set. Defaults to 0.632. A numeric s.t.
 `0 < bagg <= 1`. Each subsample will be `bagg*n`` elements.}
-
-\item{depth}{the maximum allowed tree depth.}
 }
 \value{
 an object of class `rf` containing the following:
 \item{`forest`}{A list a decision trees.}
 \item{`method`}{the method used to fit the forest.}
+\item{`prior`}{the hyperparameters of the Dirichlet Prior.}
+\item{`post`}{the hyperparamaters of the Dirichlet Posterior.}
 }
 \description{
 Fit a Bayesian Decision-Making Forest Classifier.

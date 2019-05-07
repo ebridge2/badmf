@@ -21,3 +21,6 @@ the best split.
 \description{
 Find Best split in the data.
 }
+\author{
+Eric Bridgeford
+}
