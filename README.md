@@ -1,2 +1,13 @@
-# bayesian_rf
-Bayesian Random Forests
+# Bayesian Decision-Making Forests (BaD-MF)
+
+A package for fitting Bayesian Decision-Making Forests (BaD-MFs). At each node of a decision tree, a subset of features is chosen from the target feature space for determination of the optimal split criterion. In a simple classification problem, for instance, a single feature is selected from `d < p` possible choices. These features are selected uniformly and at random,and no data outside of the data seen by the tree may be used for assessing the split criterion.
+
+In a random forest, numerous decision trees are aggregated to construct an ensemble learner. Trees are constructed using 
+Bootstrap AGGregation (bagging), through which each tree sees a nonparametric sample from the target dataset upon which 
+a decision tree is constructed. Bagging has been shown by numerous investigators to reduce the variance and help avoid overfitting of individual trees.
+
+As each tree only obtains a subset of the dataset, we risk choosing features that may, or may not, accurately represent the
+target dataset. While growing the forest may seem an easy solution, larger forests are computationally expensive, and we risk
+not seeing the features that really matter for our classification problem at a high enough frequency.
+Through `badmf`, we train an initial random forest using the traditional approach, where features are selected for assessment 
+uniformly and at random using a non-informative Dirichlet Prior (each feature sampled with equal probability). Assuming the sampling distribution for the features is Multinomial, we obtain a Dirichlet Posterior by combining information from our non-informative prior with the relative counts of each feature in the trained forest. We finally train a new classifier, where features are instead sampled using the resulting posterior at each split node. Optimally, the resulting forest is small (running less risk of being highly variant and overfit) and efficient (with the optimal features selected more frequently, we obtain similar performance to a much larger and more complex forest using far fewer nodes).
