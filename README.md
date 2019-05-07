@@ -5,9 +5,7 @@
 - [System Requirements](#system-requirements)
 - [Installation Guide](#installation-guide)
 - [Demo](#demo)
-- [Results](#results)
-- [License](./LICENSE)
-- [Issues](https://github.com/ebridge2/lol/issues)
+- [Issues](https://github.com/ebridge2/badmf/issues)
 - [Citation](#citation)
 
 ## Overview
