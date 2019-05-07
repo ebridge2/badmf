@@ -4,12 +4,14 @@
 \alias{build.tree}
 \title{Recursive Approach for Building Decision Tree}
 \usage{
-build.tree(split, d, depth.max, size, depth, debug = FALSE)
+build.tree(split, d, alpha, depth.max, size, depth, debug = FALSE)
 }
 \arguments{
 \item{split}{a particular split node.}
 
 \item{d}{the number of features to subsample.}
+
+\item{alpha}{the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.}
 
 \item{depth.max}{the max tree depth.}
 

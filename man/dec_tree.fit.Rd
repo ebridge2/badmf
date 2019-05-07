@@ -4,21 +4,33 @@
 \alias{dec_tree.fit}
 \title{Bayesian Decision Tree Fit}
 \usage{
-dec_tree.fit(formuler, data = NULL, family = "dirichlet",
-  prior = NULL)
+dec_tree.fit(formuler, data = NULL, d = NULL, alpha = NULL,
+  method = "classification", depth.max = 1, size = 1,
+  debug = FALSE)
 }
 \arguments{
 \item{formuler}{ravioli ravioli give me the formuoli.}
 
-\item{data}{the data associated with the formuler.}
+\item{data}{the data associated with the formuler. Note: if you want an intercept, you must
+add it ahead of time.}
 
-\item{family}{the family to use for the feature prior. If NULL, does not construct a prior.}
+\item{d}{the number of features to subsample at a split node.}
+
+\item{alpha}{the sampling distribution for the features. A `[p]` vector. If `NULL`, samples uniformly.}
+
+\item{method}{whether you want "classification" or "regression".}
+
+\item{size}{the minimum allowed number of samples for an individual node. Defaults to `1`.}
+
+\item{debug}{whether to save the predictors and responses that are categorized. Defaults to `FALSE`.}
+
+\item{depth}{the maximum allowed tree depth.}
 }
 \value{
 A trained decision tree.
 }
 \description{
-Fit a Bayesian Decision Tree.
+Fit a Bayesian Decision Tree with a `stats`-like formula frontend interface.
 }
 \author{
 Eric Bridgeford

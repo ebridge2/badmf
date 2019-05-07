@@ -1,33 +1,97 @@
 #' Bayesian Decision Tree Fit
 #'
-#' Fit a Bayesian Decision Tree.
+#' Fit a Bayesian Decision Tree with a `stats`-like formula frontend interface.
 #'
 #' @param formuler ravioli ravioli give me the formuoli.
-#' @param data the data associated with the formuler.
-#' @param family the family to use for the feature prior. If NULL, does not construct a prior.
+#' @param data the data associated with the formuler. Note: if you want an intercept, you must
+#' add it ahead of time.
+#' @param d the number of features to subsample at a split node.
+#' @param alpha the sampling distribution for the features. A `[p]` vector. If `NULL`, samples uniformly.
+#' @param method whether you want "classification" or "regression".
+#' @param depth the maximum allowed tree depth.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to `1`.
+#' @param debug whether to save the predictors and responses that are categorized. Defaults to `FALSE`.
 #' @return A trained decision tree.
 #' @author Eric Bridgeford
 #' @export
-dec_tree.fit <- function(formuler, data=NULL, family="dirichlet", prior=NULL) {
-  mf <- Call <- match.call()
-  print(mf)
-  m <- match(c("formuler", "data", "subset"), names(mf), 0)
-  mf <- mf[c(1, m)]
+dec_tree.fit <- function(formuler, data=NULL, d=NULL, alpha=NULL, method="classification",
+                         depth.max=1, size=1, debug=FALSE) {
+  # miscellaneous formula jargon
+  call <- match.call()
+
+  if (missing(data))
+    data <- environment(formula)
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset"), names(mf), 0L)
+  mf <- mf[c(1L, m)]
   mf$drop.unused.levels <- TRUE
   mf[[1L]] <- quote(stats::model.frame)
-  mf <- eval.parent(mf)
-  Terms <- attr(mf, "terms")
+  mf <- eval(mf, parent.frame())
 
-  Y <- model.response(mf)
-  X <- if (!is.empty.model(Terms))
-    model.matrix(Terms, mf, contrasts)
-  fit <- do.call(tree.fit, c(X, Y))
+  mt <- attr(mf, "terms")
+  Y <- model.response(mf, "any")
+  if (length(dim(Y)) == 1L) {
+    nm <- rownames(Y)
+    dim(Y) <- NULL
+    if (!is.null(nm))
+      names(Y) <- nm
+  }
+  X <- if (!is.empty.model(mt)) {
+    model.matrix(mt, mf, contrasts)
+  }
+
+  if (method == "classification") {
+    fit <- do.call(tree.class.fit, list(X[,-c(1)], Y, d, alpha, depth.max, size, debug))
+    fit$formula <- formuler
+  } else {
+    stop("Not yet implemented!")
+  }
   return(fit)
+}
+
+#' Fit a decision tree classifier.
+#' @param X the predictors. A `[n, p]` matrix.
+#' @param Y the responses. A `[n]` vector or, optionally, a factor.
+#' @param d the number of features to subsample at each node. Defaults to `NULL`, which tries every feature.
+#' @param alpha the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.
+#' @param depth.max the maximum allowed tree depth. Defaults to `1`.
+#' @param size the minimum allowed number of samples for an individual node. Defaults to `1`.
+#' @param debug whether to save the predictors and responses that are categorized. Defaults to `FALSE`.
+#' into a particular leaf node.
+#' @return an object of class `dec.tree` containing the following:
+#' \item{`tree`}{the decision tree.}
+#' \item{`X`}{The training predictors.}
+#' \item{`Y`}{the training responses.}
+#' \item{`d`}{d the number of features subsampled at each node.}
+#' \item{`alpha`}{the sampling distribution for the features. A `[p]` vector.}
+#' \item{`depth.max`}{the maximum allowed tree depth.}
+#' \item{`size`}{the maximum allowed tree depth.}
+#' \item{`debug`}{whether to save the predictors and responses that are categorized.}
+#' @author Eric Bridgeford
+#' @export
+tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=1, size=1, debug=FALSE) {
+  Y <- as.factor(Y)
+  n <- length(Y); p <- dim(X)[2]
+
+  if (!ifelse(is.integer(d), d <= p & d > 0, !is.null(d))) {
+    stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
+  }
+  # if alpha is null, sample uniformly with Dir(1, 1, ...)
+  if (is.null(alpha)) {
+    alpha <- rep(1, p)
+  }
+  # build the tree with the Decision Tree Algorithm
+  tree <- build.tree(get.split(X, Y, d), d, alpha, depth.max, size, 1, debug)
+  return(structure(
+    list(tree=tree, X=X, Y=Y, d=d, alpha=alpha, depth.max=depth.max, size=size, debug=debug),
+    class="dec.tree"
+  ))
 }
 
 #' Recursive Approach for Building Decision Tree
 #' @param split a particular split node.
 #' @param d the number of features to subsample.
+#' @param alpha the sampling distribution for the features. A `[p]` vector. If `NULL`, uses a uniform.
 #' @param depth.max the max tree depth.
 #' @param size the minimum number of elements at a particular.
 #' @param depth the current depth of the tree.
@@ -36,7 +100,7 @@ dec_tree.fit <- function(formuler, data=NULL, family="dirichlet", prior=NULL) {
 #' @importFrom forcats fct_c
 #' @return a layer of a decision tree.
 #' @author Eric Bridgeford
-build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
+build.tree <- function(split, d, alpha, depth.max, size, depth, debug=FALSE) {
   # if we have an empty child, create a leaf by merging
   # so that we don't have a totally empty child
   if (length(split$left$Y) == 0 || length(split$right$Y) == 0) {
@@ -71,7 +135,7 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
   if (length(split$right$Y) > size) {
     # split the node if we can still do better
       split$right <- build.tree(
-        get.split(split$right$X, split$right$Y, d),
+        get.split(split$right$X, split$right$Y, d, alpha),
         d, depth.max, size, depth + 1, debug=debug
       )
   } else {
@@ -87,7 +151,7 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
   if (length(split$left$Y) > size) {
     # split the node if we can still do better
     split$left <- build.tree(
-      get.split(split$left$X, split$left$Y, d),
+      get.split(split$left$X, split$left$Y, d, alpha),
       d, depth.max, size, depth + 1, debug=debug
     )
   } else {
@@ -99,26 +163,6 @@ build.tree <- function(split, d, depth.max, size, depth, debug=FALSE) {
     }
   }
   return(split)
-}
-
-#' Fit a tree.
-#' @param X the predictors.
-#' @param Y the responses.
-#' @param d the number of features to subsample.
-#' @param depth the maximum allowed tree depth.
-#' @param size the minimum allowed number of samples for an individual node.
-#' @param debug whether to save the predictors and responses that are categorized
-#' into a particular leaf node.
-#' @return a fit decision tree.
-#' @author Eric Bridgeford
-tree.fit <- function(X, Y, d, depth.max=1, size=1, debug=FALSE) {
-  n <- length(Y); p <- dim(X)[2]
-  if (!(ifelse(is.integer(p), d <= p & d > 0, FALSE) ||
-      (ifelse(is.null(p), TRUE, FALSE)))) {
-    stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
-  }
-  tree <- build.tree(get.split(X, Y, d), d, depth.max, size, 1, debug)
-  return(tree)
 }
 
 #' Create a new split of the data.
@@ -136,7 +180,7 @@ create.split <- function(X, Y, i, t) {
   split <- structure(list(left=list(X=X[idx,], Y=Y[idx]),
                      right=list(X=X[!idx,], Y=Y[!idx]),
                      feature=i, threshold=t, n=length(Y)),
-                     class="split")
+                     class="split.node")
   return(split)
 }
 
@@ -145,11 +189,17 @@ create.split <- function(X, Y, i, t) {
 #' @param X the predictors.
 #' @param Y the responses.
 #' @param d the number of features to subsample. Should be an integer 0 < d <= p.
+#' @param alpha the sampling distribution for the features. A [p] vector. If `NULL`, uses a uniform.
 #' @return the best split.
-get.split <- function(X, Y, d) {
+#' @importFrom MCMCpack rdirichlet
+get.split <- function(X, Y, d, alpha) {
   n <- length(Y); p <- dim(X)[2]
   # sample features to check
-  features <- sample(1:p, d)
+  if (!is.null(d)) {
+    features <- rdirichlet(d, alpha)
+  } else {
+    features <- sample(1:p, d, replace=FALSE)
+  }
   # initialize best split
   best_split <- list(X=X, Y=Y, t=NULL, feature=NULL, score=1.1, split=NULL)
   # loop over subsampled features
@@ -205,5 +255,6 @@ leaf.node <- function(Y) {
   gr.ct <- sapply(levels(Y), function(y) {
     sum(Y == y)
   })
-  return(structure(list(vote=levels(Y)[which.max(gr.ct)]), class="leaf"))
+  return(structure(list(vote=factor(levels(Y)[which.max(gr.ct)],
+                                    levels = levels(Y))), class="leaf.node"))
 }

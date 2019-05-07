@@ -4,7 +4,7 @@
 \alias{get.split}
 \title{Find Best split in the data.}
 \usage{
-get.split(X, Y, d)
+get.split(X, Y, d, alpha)
 }
 \arguments{
 \item{X}{the predictors.}
@@ -12,6 +12,8 @@ get.split(X, Y, d)
 \item{Y}{the responses.}
 
 \item{d}{the number of features to subsample. Should be an integer 0 < d <= p.}
+
+\item{alpha}{the sampling distribution for the features. A [p] vector. If `NULL`, uses a uniform.}
 }
 \value{
 the best split.
