@@ -84,7 +84,7 @@ dec.tree.class.fit <- function(X, Y, d=NULL, alpha=NULL, depth.max=5L, size=1L, 
   Y <- as.factor(Y)
   n <- length(Y); p <- dim(X)[2]
 
-  if (!ifelse(is.integer(d), d <= p & d > 0, !is.null(d))) {
+  if (!ifelse(is.integer(d), d <= p & d > 0, is.null(d))) {
     stop("d should be a positive integer <= p, or NULL to indicate to sample every feature.")
   }
 
